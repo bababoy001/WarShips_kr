@@ -63,4 +63,8 @@
         <file>Images/ship4.png</file>
         <file>Images/ship4v.png</file>
     </qresource>
+    <qresource prefix="/blast">
+        <file>Images/blast(1).png</file>
+        <file>Images/blast(2).png</file>
+    </qresource>
 </RCC>
