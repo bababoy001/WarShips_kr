@@ -1,16 +1,16 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
+#include <QGraphicsView>
 
-
-class Game: public QGraphicsView{
+class Game : public QGraphicsView
+{
     Q_OBJECT
 public:
     // constructor
-    Game(QWidget * parent = NULL);
+    Game(QWidget *parent = NULL);
 
     // public methods
     void displayMainMenu();
@@ -26,16 +26,13 @@ public:
     void setWhosTurn(QString player);
 
     // public variables
-    QGraphicsScene* scene;
-
+    QGraphicsScene *scene;
 
 public slots:
     // public slots
 
 private:
     // private mathod
-
-
 
     // private attributes
     int widthWindow;
@@ -49,11 +46,11 @@ private:
 
     QString whosTurn_;
 
-    QGraphicsTextItem* textPlayer1;
-    QGraphicsTextItem* textPlayer2;
+    QGraphicsTextItem *textPlayer1;
+    QGraphicsTextItem *textPlayer2;
 
-    QVector<QGraphicsTextItem*> textLetters;
-    QVector<QGraphicsTextItem*> textNumbers;
+    QVector<QGraphicsTextItem *> textLetters;
+    QVector<QGraphicsTextItem *> textNumbers;
 };
 
 #endif // GAME_H

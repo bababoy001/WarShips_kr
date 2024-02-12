@@ -11,11 +11,13 @@ CONFIG += c++17
 
 SOURCES += \
     Button.cpp \
+    Cell.cpp \
     Game.cpp \
     main.cpp
 
 HEADERS += \
     Button.h \
+    Cell.h \
     Game.h
 
 # Default rules for deployment.

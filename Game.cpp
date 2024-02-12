@@ -14,65 +14,67 @@ Game::Game(QWidget *parent)
     setScene(scene);
 
     // set up the screen and scene
-    setWindowSize(widthWindow,heightWindow);
-
+    setWindowSize(widthWindow, heightWindow);
 }
 
-void Game::displayMainMenu(){
-
+void Game::displayMainMenu()
+{
     // create the title text
-    QGraphicsTextItem* titleText = new QGraphicsTextItem(QString("War Ships"));
+    QGraphicsTextItem *titleText = new QGraphicsTextItem(QString("War Ships"));
     QFont titleFont("comic sens", 50);
     titleText->setFont(titleFont);
-    int txPos = this->width()/2 - titleText->boundingRect().width()/2;
+    int txPos = this->width() / 2 - titleText->boundingRect().width() / 2;
     int tyPos = 50;
     titleText->setPos(txPos, tyPos);
     scene->addItem(titleText);
 
     // create the play button with friend
-    Button* playButtonF = new Button(QString("Play with friend"));
+    Button *playButtonF = new Button(QString("Play with friend"));
     playButtonF->setPos(200, 450);
     scene->addItem(playButtonF);
 
-
     // create the play button vs computer
-    Button* playButtonC = new Button(QString("Play vs computer"));
+    Button *playButtonC = new Button(QString("Play vs computer"));
     playButtonC->setPos(600, 450);
     scene->addItem(playButtonC);
 
-
     // create the quit button
-    Button* quitButton = new Button(QString("Quit"));
-    int qxPos = this->width()/2 - quitButton->boundingRect().width()/2;
+    Button *quitButton = new Button(QString("Quit"));
+    int qxPos = this->width() / 2 - quitButton->boundingRect().width() / 2;
     int qyPos = 600;
     quitButton->setPos(qxPos, qyPos);
     scene->addItem(quitButton);
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
 
     // add images
-    QGraphicsPixmapItem* imageHumans = new QGraphicsPixmapItem(QPixmap(QString(":/images/Images/humans.png")));
-    imageHumans->setPos(225,250);
+    QGraphicsPixmapItem *imageHumans = new QGraphicsPixmapItem(
+        QPixmap(QString(":/images/Images/humans.png")));
+    imageHumans->setPos(225, 250);
     scene->addItem(imageHumans);
 
-    QGraphicsPixmapItem* imageComputer = new QGraphicsPixmapItem(QPixmap(QString(":/images/Images/computer.png")));
-    imageComputer->setPos(625,250);
+    QGraphicsPixmapItem *imageComputer = new QGraphicsPixmapItem(
+        QPixmap(QString(":/images/Images/computer.png")));
+    imageComputer->setPos(625, 250);
     scene->addItem(imageComputer);
 }
 
-
-QString Game::getWhosTurn(){
+QString Game::getWhosTurn()
+{
     return whosTurn_;
 }
 
-int Game::getWidthMap(){
+int Game::getWidthMap()
+{
     return widthMap;
 }
 
-int Game::getHeightMap(){
+int Game::getHeightMap()
+{
     return heightMap;
 }
 
-void Game::setWindowSize(int width, int height){
+void Game::setWindowSize(int width, int height)
+{
     // set window width and height
     widthWindow = width;
     heightWindow = height;
@@ -81,28 +83,29 @@ void Game::setWindowSize(int width, int height){
     setFixedSize(width, height);
 
     // set size of scene
-    scene->setSceneRect(0,0,width, height);
+    scene->setSceneRect(0, 0, width, height);
 }
 
-void Game::setMapSize(int rows, int columns){
+void Game::setMapSize(int rows, int columns)
+{
     // resize map
     widthMap = rows;
     heightMap = columns;
 }
 
-void Game::setWhosTurn(QString player){
+void Game::setWhosTurn(QString player)
+{
     // change the QString
     whosTurn_ = player;
 
     // change the color of players
-    if(player == QString("PLAYER1")){
+    if (player == QString("PLAYER1")) {
         // set textPlayer1 green, what meen his turn
         textPlayer1->setDefaultTextColor(QColor(Qt::green));
 
         // set textPlayer2 black
         textPlayer2->setDefaultTextColor(QColor(Qt::black));
-    }
-    else if(player == QString("PLAYER2")){
+    } else if (player == QString("PLAYER2")) {
         // set textPlayer2 green, what meen his turn
         textPlayer2->setDefaultTextColor(QColor(Qt::green));
 
