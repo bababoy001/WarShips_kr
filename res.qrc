@@ -6,4 +6,61 @@
     <qresource prefix="/music">
         <file>Music/menuSound.wav</file>
     </qresource>
+    <qresource prefix="/mine">
+        <file>Images/mine.png</file>
+    </qresource>
+    <qresource prefix="/capitalShips">
+        <file>Images/capitalShip(1).png</file>
+        <file>Images/capitalShip(1)v.png</file>
+        <file>Images/capitalShip(2).png</file>
+        <file>Images/capitalShip(2)v.png</file>
+        <file>Images/capitalShip(3).png</file>
+        <file>Images/capitalShip(3)v.png</file>
+        <file>Images/capitalShip(4).png</file>
+        <file>Images/capitalShip(4)v.png</file>
+        <file>Images/capitalShip.png</file>
+        <file>Images/capitalShipv.png</file>
+    </qresource>
+    <qresource prefix="/fuelShip">
+        <file>Images/fuelShip(1).png</file>
+        <file>Images/fuelShip(1)v.png</file>
+        <file>Images/fuelShip(2).png</file>
+        <file>Images/fuelShip(2)v.png</file>
+        <file>Images/fuelShip(3).png</file>
+        <file>Images/fuelShip(3)v.png</file>
+        <file>Images/fuelShip(4).png</file>
+        <file>Images/fuelShip(4)v.png</file>
+        <file>Images/fuelShip.png</file>
+        <file>Images/fuelShipv.png</file>
+    </qresource>
+    <qresource prefix="/Ships">
+        <file>Images/ship1(1).png</file>
+        <file>Images/ship1(1)v.png</file>
+        <file>Images/ship1.png</file>
+        <file>Images/ship1v.png</file>
+        <file>Images/ship2(1).png</file>
+        <file>Images/ship2(1)v.png</file>
+        <file>Images/ship2(2).png</file>
+        <file>Images/ship2(2)v.png</file>
+        <file>Images/ship2.png</file>
+        <file>Images/ship2v.png</file>
+        <file>Images/ship3(1).png</file>
+        <file>Images/ship3(1)v.png</file>
+        <file>Images/ship3(2).png</file>
+        <file>Images/ship3(2)v.png</file>
+        <file>Images/ship3(3).png</file>
+        <file>Images/ship3(3)v.png</file>
+        <file>Images/ship3.png</file>
+        <file>Images/ship3v.png</file>
+        <file>Images/ship4(1).png</file>
+        <file>Images/ship4(1)v.png</file>
+        <file>Images/ship4(2).png</file>
+        <file>Images/ship4(2)v.png</file>
+        <file>Images/ship4(3).png</file>
+        <file>Images/ship4(3)v.png</file>
+        <file>Images/ship4(4).png</file>
+        <file>Images/ship4(4)v.png</file>
+        <file>Images/ship4.png</file>
+        <file>Images/ship4v.png</file>
+    </qresource>
 </RCC>
