@@ -1,17 +1,17 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include <QGraphicsRectItem>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsRectItem>
 #include <QObject>
 
 #include <QGraphicsPixmapItem>
 
-
-class Cell: public QGraphicsItemGroup{
+class Cell : public QGraphicsItemGroup
+{
 public:
     // constructors
-    Cell(QGraphicsItem * parent=NULL);
+    Cell(QGraphicsItem *parent = NULL);
 
     // public methods
     void drawCross();
@@ -20,7 +20,7 @@ public:
     void setPlaceMode();
 
     // setters
-    void setImage(QGraphicsPixmapItem* pix);
+    void setImage(QGraphicsPixmapItem *pix);
 
     // events
 
@@ -33,9 +33,10 @@ public:
     bool isHit;
     bool isCellForPlace;
     QGraphicsPixmapItem *pixItem;
+
 private:
     // private variables
-    QGraphicsRectItem* square;
+    QGraphicsRectItem *square;
     QGraphicsLineItem *cross1;
     QGraphicsLineItem *cross2;
     QGraphicsPixmapItem *blast1;

@@ -1,11 +1,13 @@
 #include "Cell.h"
-#include "Game.h"
-#include <QSoundEffect>
 #include <QPointF>
+#include <QSoundEffect>
+#include "Game.h"
 
-extern Game* game;
+extern Game *game;
 
-Cell::Cell(QGraphicsItem *parent): QGraphicsItemGroup(parent){
+Cell::Cell(QGraphicsItem *parent)
+    : QGraphicsItemGroup(parent)
+{
     // draw cell
     square = new QGraphicsRectItem(0, 0, 40, 40);
     addToGroup(square);
@@ -41,23 +43,23 @@ Cell::Cell(QGraphicsItem *parent): QGraphicsItemGroup(parent){
     setAcceptHoverEvents(true);
 }
 
-void Cell::drawCross(){
-
+void Cell::drawCross()
+{
     // draw cross
     cross1->setVisible(true);
     cross2->setVisible(true);
 }
 
-void Cell::drawBlast1(){
-
+void Cell::drawBlast1()
+{
     // draw blast 1
     addToGroup(blast1);
     blast1->setPixmap(QPixmap(QString(":/blast/Images/blast(1).png")));
-    blast1->setPos(10,10);
+    blast1->setPos(10, 10);
 }
 
-void Cell::drawBlast2(){
-
+void Cell::drawBlast2()
+{
     // remove blast 1
     removeFromGroup(blast1);
     delete blast1;
@@ -65,14 +67,14 @@ void Cell::drawBlast2(){
     // draw blast 2
     addToGroup(blast2);
     blast2->setPixmap(QPixmap(QString(":/images/Images/blast(2).png")));
-    blast2->setPos(-5,-5);
+    blast2->setPos(-5, -5);
 
     // draw ship
     pixItem->setVisible(true);
 }
 
-void Cell::setPlaceMode(){
-
+void Cell::setPlaceMode()
+{
     // set isCellForPlace and delete useless variables
     isCellForPlace = true;
     delete cross1;
@@ -82,18 +84,17 @@ void Cell::setPlaceMode(){
     delete pixItem;
 }
 
-void Cell::setImage(QGraphicsPixmapItem* pix){
-
+void Cell::setImage(QGraphicsPixmapItem *pix)
+{
     // set PixItem
     pixItem->setPixmap(pix->pixmap());
     pixItem->setPos(pix->pos());
     addToGroup(pixItem);
 }
 
-
-
-void Cell::hoverEnterEvent(QGraphicsSceneHoverEvent *event){
-    if(!isCellForPlace){
+void Cell::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (!isCellForPlace) {
         // change color to yellow
         QBrush brush;
         brush.setStyle(Qt::SolidPattern);
@@ -102,8 +103,9 @@ void Cell::hoverEnterEvent(QGraphicsSceneHoverEvent *event){
     }
 }
 
-void Cell::hoverLeaveEvent(QGraphicsSceneHoverEvent *event){
-    if(!isCellForPlace){
+void Cell::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (!isCellForPlace) {
         // back to default
         QBrush brush;
         brush.setStyle(Qt::SolidPattern);
