@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/images">
-        <file>computer.png</file>
-        <file>humans.png</file>
+        <file>Images/computer.png</file>
+        <file>Images/humans.png</file>
+    </qresource>
+    <qresource prefix="/music">
+        <file>Music/menuSound.wav</file>
     </qresource>
 </RCC>
