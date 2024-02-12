@@ -52,7 +52,7 @@ void Cell::drawBlast1(){
 
     // draw blast 1
     addToGroup(blast1);
-    blast1->setPixmap(QPixmap(QString(":/images/blast(1).png")));
+    blast1->setPixmap(QPixmap(QString(":/blast/Images/blast(1).png")));
     blast1->setPos(10,10);
 }
 
@@ -64,7 +64,7 @@ void Cell::drawBlast2(){
 
     // draw blast 2
     addToGroup(blast2);
-    blast2->setPixmap(QPixmap(QString(":/images/blast(2).png")));
+    blast2->setPixmap(QPixmap(QString(":/images/Images/blast(2).png")));
     blast2->setPos(-5,-5);
 
     // draw ship

@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
 #include <QGraphicsView>
+#include "Cell.h"
 
 class Game : public QGraphicsView
 {
@@ -27,12 +28,15 @@ public:
 
     // public variables
     QGraphicsScene *scene;
+    QVector<QVector<Cell*>> player1Map;
+    QVector<QVector<Cell*>> player2Map;
 
 public slots:
     // public slots
 
 private:
     // private mathod
+    void createScreenGame();
 
     // private attributes
     int widthWindow;
@@ -48,6 +52,9 @@ private:
 
     QGraphicsTextItem *textPlayer1;
     QGraphicsTextItem *textPlayer2;
+
+    QGraphicsTextItem* wrongPlace;
+    QGraphicsTextItem* returnFire;
 
     QVector<QGraphicsTextItem *> textLetters;
     QVector<QGraphicsTextItem *> textNumbers;
