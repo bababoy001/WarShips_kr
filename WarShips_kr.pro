@@ -11,6 +11,8 @@ CONFIG += c++17
 
 SOURCES += \
     Bot.cpp \
+    BotLvl2.cpp \
+    BotLvl3.cpp \
     Button.cpp \
     Cell.cpp \
     Game.cpp \
@@ -18,6 +20,8 @@ SOURCES += \
 
 HEADERS += \
     Bot.h \
+    BotLvl2.h \
+    BotLvl3.h \
     Button.h \
     Cell.h \
     Game.h

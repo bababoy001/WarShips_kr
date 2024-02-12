@@ -13,7 +13,7 @@ void Bot::botAttack(){
     takeCoord(x, y);
 
     // attack this coord
-//    game->attack(game->player2Map[x][y]);
+    game->attack(game->player2Map[x][y]);
 }
 
 void Bot::takeCoord(int &x, int &y){
