@@ -16,7 +16,11 @@ SOURCES += \
     Button.cpp \
     Cell.cpp \
     Game.cpp \
-    main.cpp
+    Ship.cpp \
+    capitalShip.cpp \
+    fuelShip.cpp \
+    main.cpp \
+    mine.cpp
 
 HEADERS += \
     Bot.h \
@@ -24,7 +28,11 @@ HEADERS += \
     BotLvl3.h \
     Button.h \
     Cell.h \
-    Game.h
+    Game.h \
+    Ship.h \
+    capitalShip.h \
+    fuelShip.h \
+    mine.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
