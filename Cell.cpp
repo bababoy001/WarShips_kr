@@ -92,6 +92,21 @@ void Cell::setImage(QGraphicsPixmapItem *pix)
     addToGroup(pixItem);
 }
 
+void Cell::mousePressEvent(QGraphicsSceneMouseEvent *event){
+
+    if(game->shipToPlace && !isCellForPlace && game->placeMode){
+
+        // place one ship
+        game->placeSpecifiedShip(this);
+    }
+    else if(game->gameMode){
+
+        // attack
+        game->attack(this);
+    }
+}
+
+
 void Cell::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     if (!isCellForPlace) {

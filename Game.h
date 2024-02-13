@@ -16,6 +16,8 @@ public:
     // public methods
     void displayMainMenu();
 
+    void attack(Cell* cell);
+
     // getters
     QString getWhosTurn();
     int getWidthMap();

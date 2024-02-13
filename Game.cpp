@@ -58,6 +58,154 @@ void Game::displayMainMenu()
     scene->addItem(imageComputer);
 }
 
+void Game::attack(Cell *cell){
+
+    // find the map where this cell is from
+    bool cellInFirstMap = false;
+    bool cellInSecondMap = false;
+
+    for(int i = 0, n = getWidthMap(); i < n; i++){
+        for(int j = 0, n = getHeightMap(); j < n; j++){
+            if(player1Map[i][j] == cell){
+                cellInFirstMap = true;
+                break;
+            }
+            else if(player2Map[i][j] == cell){
+                cellInSecondMap = true;
+                break;
+            }
+        }
+    }
+
+    // add sound effect
+    QSoundEffect *sound = new QSoundEffect(this);
+    sound->setVolume(0.7);
+    sound->play();
+
+    // attack enemy map
+    if(((cellInFirstMap) && (getWhosTurn() == QString("PLAYER2"))) || ((cellInSecondMap) && (getWhosTurn() == QString("PLAYER1")))){
+        // if cell already Hit or Miss
+        if(cell->isHit || cell->isMiss){
+            if(botMode && getWhosTurn() == QString("PLAYER1")){
+                bot->botAttack();
+            }
+            return;
+        }
+        // if Miss
+        else if(!cell->isHit && !cell->isMiss && !cell->isShip){
+            // hide whos Turn
+            textPlayer1->setVisible(false);
+            textPlayer2->setVisible(false);
+
+            // play sound if Miss
+            sound->setSource(QUrl("qrc:/music/soundMiss.wav"));
+            sound->play();
+
+            // change turn
+            if(getWhosTurn() == QString("PLAYER1")){
+                setWhosTurn(QString("PLAYER2"));
+            }
+            else if(getWhosTurn() == QString("PLAYER2")){
+                setWhosTurn(QString("PLAYER1"));
+            }
+
+            // remember whos turn
+            QString rememberPlayer = getWhosTurn();
+
+            // block map for time
+            setWhosTurn(QString("NOONE"));
+
+            QTimer::singleShot(1400, this, [=](){
+
+                // draw miss cross
+                cell->drawCross();
+
+                // show whos Turn
+                textPlayer1->setVisible(true);
+                textPlayer2->setVisible(true);
+
+                setWhosTurn(rememberPlayer);
+
+                // draw zalp message
+                if(zalpMode1){
+                    setWhosTurn(QString("PLAYER1"));
+                    QString allowedMissesText = QString("\nThe turn is passed to Player 1 and he has the right to %1 misses").arg(zalpMode1);
+                    returnFire->setPlainText("Player 2 has destroyed an enemy Сapital ship." + allowedMissesText);
+                    returnFire->setVisible(true);
+                    returnFire->setPos(this->width()/2 -  returnFire->boundingRect().width()/2, 100 + (getHeightMap()*40) + 10);
+                    zalpMode1--;
+                }
+                else{
+                    returnFire->setVisible(false);
+                }
+                if(zalpMode2){
+                    setWhosTurn(QString("PLAYER2"));
+                    QString allowedMissesText = QString("\nThe turn is passed to Player 2 and he has the right to %1 misses").arg(zalpMode2);
+                    returnFire->setPlainText("Player 1 has destroyed an enemy Сapital ship." + allowedMissesText);
+                    returnFire->setVisible(true);
+                    returnFire->setPos(this->width()/2 -  returnFire->boundingRect().width()/2, 100 + (getHeightMap()*40) + 10);
+                    zalpMode2--;
+                }
+
+                if(botMode && getWhosTurn() == QString("PLAYER1")){
+                    bot->botAttack();
+                }
+            });
+            cell->isMiss = true;
+        }
+        // if Hit
+        else if(!cell->isHit && !cell->isMiss && cell->isShip){
+            // hide whos Turn
+            textPlayer1->setVisible(false);
+            textPlayer2->setVisible(false);
+
+            // play sound if Hit
+            sound->setSource(QUrl("qrc:/music/soundHit.wav"));
+            sound->play();
+
+            QString rememberPlayer = getWhosTurn();
+            setWhosTurn(QString("NOONE"));
+            QTimer::singleShot(1400, this, [=](){
+
+                // draw hit blast
+                cell->drawBlast1();
+
+
+
+                // show whos Turn
+                textPlayer1->setVisible(true);
+                textPlayer2->setVisible(true);
+
+                setWhosTurn(rememberPlayer);
+
+
+                // check is ship is destroy
+                checkShipInHit(cell);
+
+                if(getWhosTurn()  == QString("PLAYER1") && zalpMode2>0){
+                    setWhosTurn(QString("PLAYER2"));
+                    QString allowedMissesText = QString("\nThe turn is passed to Player 2 and he has the right to %1 misses").arg(zalpMode2+1);
+                    returnFire->setPlainText("Player 1 has destroyed an enemy Сapital ship." + allowedMissesText);
+                    returnFire->setVisible(true);
+                    returnFire->setPos(this->width()/2 -  returnFire->boundingRect().width()/2, 100 + (getHeightMap()*40) + 10);
+                }
+                else if(getWhosTurn()  == QString("PLAYER2") && zalpMode1>0){
+                    setWhosTurn(QString("PLAYER1"));
+                    QString allowedMissesText = QString("\nThe turn is passed to Player 1 and he has the right to %1 misses").arg(zalpMode1+1);
+                    returnFire->setPlainText("Player 2 has destroyed an enemy Сapital ship." + allowedMissesText);
+                    returnFire->setVisible(true);
+                    returnFire->setPos(this->width()/2 -  returnFire->boundingRect().width()/2, 100 + (getHeightMap()*40) + 10);
+                }
+
+                if(botMode && getWhosTurn() == QString("PLAYER1") && numShipsPlayer2 != 0 && numShipsPlayer1 != 0){
+                    bot->botAttack();
+                }
+            });
+            cell->isHit = true;
+        }
+    }
+}
+
 QString Game::getWhosTurn()
 {
     return whosTurn_;
