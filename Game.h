@@ -56,6 +56,8 @@ public slots:
 private:
     // private mathod
     void createScreenGame();
+    void drawGame();
+    void hideGame();
 
     // private attributes
     int widthWindow;

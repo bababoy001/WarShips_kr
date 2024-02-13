@@ -267,3 +267,52 @@ void Game::createScreenGame()
     returnFire->setVisible(false);
     scene->addItem(returnFire);
 }
+
+void Game::drawGame(){
+    // show player1 and player2 text
+    textPlayer1->setVisible(true);
+    textPlayer2->setVisible(true);
+
+    // show maps
+    for(size_t i = 0, n = widthMap; i < n; i++){
+        for(size_t j = 0, n = heightMap; j < n; j++){
+            player1Map[i][j]->setVisible(true);
+            player2Map[i][j]->setVisible(true);
+        }
+    }
+
+    // show letters above the map
+    for (size_t i = 0, n = textLetters.size(); i < n; i++) {
+        textLetters[i]->setVisible(true);
+    }
+
+    // show the numbers to the left of the map
+    for (size_t i = 0, n = textNumbers.size(); i < n; i++) {
+        textNumbers[i]->setVisible(true);
+    }
+
+}
+
+void Game::hideGame(){
+    // hide player1 and player2 text
+    textPlayer1->setVisible(false);
+    textPlayer2->setVisible(false);
+
+    // hide maps
+    for(size_t i = 0, n = widthMap; i < n; i++){
+        for(size_t j = 0, n = heightMap; j < n; j++){
+            player1Map[i][j]->setVisible(false);
+            player2Map[i][j]->setVisible(false);
+        }
+    }
+
+    // hide letters above the map
+    for (size_t i = 0, n = textLetters.size(); i < n; i++) {
+        textLetters[i]->setVisible(false);
+    }
+
+    // hide the numbers to the left of the map
+    for (size_t i = 0, n = textNumbers.size(); i < n; i++) {
+        textNumbers[i]->setVisible(false);
+    }
+}
