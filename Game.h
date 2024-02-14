@@ -65,12 +65,20 @@ public:
 
 public slots:
     // public slots
+    void start();
+    void displayFreindMenu(QString player);
+    void displayBotMenu();
+    void setBotMode(int lvlBot);
+    void setPlaceMode(QString player, bool random);
+    void displayGameOverWindow(QString textToDisplay);
+    void restartGame();
 
 private:
-    // private mathod
+    // private method
     void createScreenGame();
     void drawGame();
     void hideGame();
+    void hideShips(QString player);
 
     // private attributes
     int widthWindow;

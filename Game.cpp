@@ -216,19 +216,77 @@ void Game::attack(Cell *cell){
     }
 }
 
-void Game::pickUpShip(Ship *ship)
-{
-
+void Game::pickUpShip(Ship *ship){
+    // picks up the specified ship
+    if(shipToPlace == NULL){
+        shipToPlace = ship;
+        return;
+    }
 }
 
-void Game::placeSpecifiedShip(Cell *cell)
-{
+void Game::placeSpecifiedShip(Cell* cell){
 
+    // initialize coordinates
+    int x = -1;
+    int y = -1;
+
+    // make wrongPlace message
+    int txPos = 0;
+    int tyPos = 0;
+
+    if(shipToPlace->getOwner() == QString("PLAYER1")){
+        txPos = 50 + (getWidthMap()*40)/2 - wrongPlace->boundingRect().width()/2;
+        tyPos = 100 + (getHeightMap() + 6)*40 + 10;
+        for(size_t i = 0, n = getWidthMap(); i < n; i++){
+            for(size_t j = 0, n = getHeightMap(); j < n; j++){
+                if(player1Map[i][j] == cell){
+                    x = i;
+                    y = j;
+                }
+            }
+        }
+    }
+    else if(shipToPlace->getOwner() == QString("PLAYER2")){
+        txPos = 150 + (getWidthMap()*40) + (getWidthMap()*40)/2 - wrongPlace->boundingRect().width()/2;
+        tyPos = 100 + (getHeightMap() + 6)*40 + 10;
+        for(size_t i = 0, n = getWidthMap(); i < n; i++){
+            for(size_t j = 0, n = getHeightMap(); j < n; j++){
+                if(player2Map[i][j] == cell){
+                    x = i;
+                    y = j;
+                }
+            }
+        }
+    }
+    wrongPlace->setPos(txPos, tyPos);
+
+
+    // find coordinates which sutisfy the rules
+
+    // check coordinates
+    if(!isPlaceForShip(x,y,shipToPlace, shipToPlace->getOwner())){
+        // if coordinates not for ship - show wrongPlace and play sound (dont place ship)
+        QSoundEffect *music = new QSoundEffect(this);
+        music->setSource(QUrl("qrc:/music/error.wav"));
+        music->setVolume(0.1);
+        music->play();
+
+        wrongPlace->setVisible(true);
+        return;
+    }
+
+    // place ship if coordinates sutisfy the rules
+    addShipToVector(shipToPlace, shipToPlace->getOwner());
+
+    placeShip(shipToPlace->getOwner());
+    scene->removeItem(shipToPlace);
+    shipToPlace = NULL;
+    wrongPlace->setVisible(false);
 }
 
-bool Game::isCellInMap(int x, int y)
-{
-
+bool Game::isCellInMap(int x, int y){
+    // check coord to size map
+    return (x >= 0) && (y >= 0) && (x < getWidthMap()) && (y < getHeightMap());
 }
 
 void Game::checkShipInHit(Cell *cell){
@@ -259,14 +317,27 @@ void Game::checkShipInHit(Cell *cell){
     }
 }
 
-void Game::mouseMoveEvent(QMouseEvent *event)
-{
+void Game::mouseMoveEvent(QMouseEvent *event){
+    // if there is a shipToPlase, then make it follow the mouse
+    if(shipToPlace){
+        shipToPlace->setPos(event->pos());
+    }
 
+    QGraphicsView::mouseMoveEvent(event);
 }
 
-void Game::mousePressEvent(QMouseEvent *event)
-{
+void Game::mousePressEvent(QMouseEvent *event){
+    // make right click to change horizontal
+    if(event->button() == Qt::RightButton){
+        if(shipToPlace){
+            horizontal = !horizontal;
+            shipToPlace->setHorizontal(horizontal);
+            shipToPlace->makeSkinShip(true);
+            return;
+        }
+    }
 
+    QGraphicsView::mousePressEvent(event);
 }
 
 QString Game::getWhosTurn(){
@@ -319,6 +390,280 @@ void Game::setWhosTurn(QString player){
         textPlayer1->setDefaultTextColor(QColor(Qt::black));
     }
 }
+
+void Game::start(){
+    // delete all menu
+    for(int i = 0; i < itemToDelete.size(); i++){
+        scene->removeItem(itemToDelete[i]);
+        delete itemToDelete[i];
+    }
+    itemToDelete.clear();
+
+    // draw game
+    drawGame();
+
+    // hide ships
+
+    if(botMode){
+        hideShips(QString("PLAYER1"));
+    }
+    else{
+        hideShips(QString("PLAYER1"));
+        hideShips(QString("PLAYER2"));
+    }
+
+    placeMode = false;
+    gameMode = true;
+
+    setWhosTurn(QString("PLAYER2"));
+}
+
+void Game::displayFreindMenu(QString player){
+
+    if(player == QString("PLAYER1")){
+        // clear the screen
+        scene->clear();
+
+        // enter size of map
+        enterSizeMap();
+
+        // create all game
+        createScreenGame();
+    }
+
+    else if(player == QString("PLAYER2")){
+        for(int i = 0; i < itemToDelete.size(); i++){
+            scene->removeItem(itemToDelete[i]);
+            delete itemToDelete[i];
+        }
+        itemToDelete.clear();
+        hideGame();
+        hideShips("PLAYER1");
+    }
+
+    // create text
+    QGraphicsTextItem* playerText = new QGraphicsTextItem(player);
+    QFont fontPlayer("comic sens", 25);
+    playerText->setFont(fontPlayer);
+    int txPos = this->width()/2 - playerText->boundingRect().width()/2;
+    int tyPos = 50;
+    playerText->setPos(txPos, tyPos);
+    scene->addItem(playerText);
+
+    // create the random button
+    Button* random = new Button(QString("Ramdom place ships"));
+    int rxPos = this->width()/2 - random->boundingRect().width()/2;
+    int ryPos = 275;
+    random->setPos(rxPos, ryPos);
+    scene->addItem(random);
+    connect(random, &Button::clicked, this, [=]() {
+        setPlaceMode(player, true);
+    });
+
+    // create the notRandom button
+    Button* notRandom = new Button(QString("Manual placement of ships"));
+    int nrxPos = this->width()/2 - notRandom->boundingRect().width()/2;
+    int nryPos = 350;
+    notRandom->setPos(nrxPos, nryPos);
+    scene->addItem(notRandom);
+    connect(notRandom, &Button::clicked, this, [=]() {
+        setPlaceMode(player, false);
+    });
+
+    itemToDelete.push_back(playerText);
+    itemToDelete.push_back(random);
+    itemToDelete.push_back(notRandom);
+}
+
+void Game::displayBotMenu(){
+
+    scene->clear();
+
+    // enter size of map
+    enterSizeMap();
+
+    // create text
+    QGraphicsTextItem* text = new QGraphicsTextItem(QString("Сhoose the difficulty level of the bot"));
+    QFont fontPlayer("comic sens", 25);
+    text->setFont(fontPlayer);
+    int txPos = this->width()/2 - text->boundingRect().width()/2;
+    int tyPos = 50;
+    text->setPos(txPos, tyPos);
+    scene->addItem(text);
+
+    // create ease bot
+    Button* easeBot = new Button(QString("Ease"));
+    int exPos = this->width()/2 - easeBot->boundingRect().width()/2;
+    int eyPos = 275;
+    easeBot->setPos(exPos, eyPos);
+    scene->addItem(easeBot);
+    connect(easeBot, &Button::clicked, this, [=]() {
+        setBotMode(1);
+    });
+
+    // create medium bot
+    Button* mediumBot = new Button(QString("Medium"));
+    int mxPos = this->width()/2 - mediumBot->boundingRect().width()/2;
+    int myPos = 375;
+    mediumBot->setPos(mxPos, myPos);
+    scene->addItem(mediumBot);
+    connect(mediumBot, &Button::clicked, this, [=]() {
+        setBotMode(2);
+    });
+
+    // create hard bot
+    Button* hardBot = new Button(QString("Hard"));
+    int hxPos = this->width()/2 - hardBot->boundingRect().width()/2;
+    int hyPos = 475;
+    hardBot->setPos(hxPos, hyPos);
+    scene->addItem(hardBot);
+    connect(hardBot, &Button::clicked, this, [=]() {
+        setBotMode(3);
+    });
+}
+
+void Game::setBotMode(int lvlBot){
+    botMode = true;
+    switch (lvlBot) {
+    case 1:
+        bot = new Bot();
+        break;
+    case 2:
+        bot = new BotLvl2();
+        break;
+    case 3:
+        bot = new BotLvl3();
+        break;
+    }
+
+    scene->clear();
+
+    createScreenGame();
+
+    setPlaceMode(QString("PLAYER1"), true);
+
+    displayFreindMenu(QString("PLAYER2"));
+}
+
+void Game::setPlaceMode(QString player, bool random){
+
+    for(int i = 0; i < itemToDelete.size(); i++){
+        scene->removeItem(itemToDelete[i]);
+        delete itemToDelete[i];
+    }
+    itemToDelete.clear();
+
+    placeMode = true;
+    gameMode = false;
+    drawGame();
+
+    if(player == QString("PLAYER1")){
+        if(random){
+            createRandomShips(QString("PLAYER1"));
+        }
+        else if(!random){
+            createShips(QString("PLAYER1"));
+        }
+    }
+    else if(player == QString("PLAYER2")){
+        if(random){
+            createRandomShips(QString("PLAYER2"));
+        }
+        else if(!random){
+            createShips(QString("PLAYER2"));
+        }
+    }
+}
+
+void Game::displayGameOverWindow(QString textToDisplay){
+    // disable all scene items
+    for(size_t i = 0, n = scene->items().size(); i < n; i++){
+        scene->items()[i]->setEnabled(false);
+    }
+
+    // draw background
+    QGraphicsRectItem * panel = new QGraphicsRectItem(0,0,widthWindow, heightWindow);
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::black);
+    panel->setBrush(brush);
+    panel->setOpacity(0.65);
+    scene->addItem(panel);
+
+
+    // draw menu
+    QGraphicsRectItem * panel2 = new QGraphicsRectItem(widthWindow/2 - 150 , 0, 300, 300);
+    QBrush brush2;
+    brush2.setStyle(Qt::SolidPattern);
+    brush2.setColor(Qt::lightGray);
+    panel2->setBrush(brush2);
+    scene->addItem(panel2);
+
+    // create playAgain button
+    Button* playAgain = new Button(QString("Play Again"));
+    playAgain->setPos(widthWindow/2 - 100, 100);
+    scene->addItem(playAgain);
+    connect(playAgain,SIGNAL(clicked()),this,SLOT(restartGame()));
+
+    // create quit button
+    Button* quit = new Button(QString("Quit"));
+    quit->setPos(widthWindow/2 - 100, 200);
+    scene->addItem(quit);
+    connect(quit,SIGNAL(clicked()),this,SLOT(close()));
+
+    // create text annoucning winner
+    QGraphicsTextItem* overText = new QGraphicsTextItem(textToDisplay);
+    QFont fontPlayer("comic sens", 25);
+    overText->setFont(fontPlayer);
+    int txPos = this->width()/2 - overText->boundingRect().width()/2;
+    int tyPos = 10;
+    overText->setPos(txPos, tyPos);
+    overText->setDefaultTextColor(QColor(Qt::green));
+    scene->addItem(overText);
+}
+
+void Game::restartGame(){
+    // initialize variables as default
+
+    numShipsPlayer1 = 0;
+    numShipsPlayer2 = 0;
+
+    numMinePlayer1 = 0;
+    numMinePlayer2 = 0;
+
+    gameMode = false;
+    placeMode = false;
+    zalpMode1 = 0;
+    zalpMode2 = 0;
+    botMode = false;
+    shipToPlace = NULL;
+    widthMapFPS = 6;
+    heightMapFPS = 6;
+
+    // clear some stuff
+    player1Ship.clear();
+    player2Ship.clear();
+
+    cellToShip.clear();
+
+    textLetters.clear();
+    textNumbers.clear();
+
+    player1Map.clear();
+    player2Map.clear();
+
+    itemToDelete.clear();
+
+    hitedCell.clear();
+    hitedShips.clear();
+
+    setWindowSize(1000,800);
+
+    scene->clear();
+
+    displayMainMenu();
+}
+
 
 void Game::createScreenGame()
 {
@@ -520,5 +865,23 @@ void Game::hideGame(){
     // hide the numbers to the left of the map
     for (size_t i = 0, n = textNumbers.size(); i < n; i++) {
         textNumbers[i]->setVisible(false);
+    }
+}
+
+void Game::hideShips(QString player){
+    // hide ships
+    if(player == QString("PLAYER1")){
+        for(int i = 0; i < player1Ship.size(); i++){
+            for(int j = 0; j < player1Ship[i]->coorXY.size(); j++){
+                player1Map[player1Ship[i]->coorXY[j].first][player1Ship[i]->coorXY[j].second]->pixItem->setVisible(false);
+            }
+        }
+    }
+    else if(player == QString("PLAYER2")){
+        for(int i = 0; i < player2Ship.size(); i++){
+            for(int j = 0; j < player2Ship[i]->coorXY.size(); j++){
+                player2Map[player2Ship[i]->coorXY[j].first][player2Ship[i]->coorXY[j].second]->pixItem->setVisible(false);
+            }
+        }
     }
 }
