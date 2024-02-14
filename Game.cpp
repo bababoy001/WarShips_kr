@@ -1,5 +1,13 @@
 #include "Game.h"
 #include "Button.h"
+#include "capitalShip.h"
+#include "fuelShip.h"
+#include "mine.h"
+#include <QSoundEffect>
+#include <QTimer>
+#include <stdlib.h>
+#include "BotLvl2.h"
+#include "BotLvl3.h"
 
 Game::Game(QWidget *parent)
 {
@@ -17,44 +25,48 @@ Game::Game(QWidget *parent)
     setWindowSize(widthWindow, heightWindow);
 }
 
-void Game::displayMainMenu()
-{
+void Game::displayMainMenu(){
+
     // create the title text
-    QGraphicsTextItem *titleText = new QGraphicsTextItem(QString("War Ships"));
+    QGraphicsTextItem* titleText = new QGraphicsTextItem(QString("War Ships"));
     QFont titleFont("comic sens", 50);
     titleText->setFont(titleFont);
-    int txPos = this->width() / 2 - titleText->boundingRect().width() / 2;
+    int txPos = this->width()/2 - titleText->boundingRect().width()/2;
     int tyPos = 50;
     titleText->setPos(txPos, tyPos);
     scene->addItem(titleText);
 
     // create the play button with friend
-    Button *playButtonF = new Button(QString("Play with friend"));
+    Button* playButtonF = new Button(QString("Play with friend"));
     playButtonF->setPos(200, 450);
     scene->addItem(playButtonF);
+    connect(playButtonF, &Button::clicked, this, [=]() {
+        displayFreindMenu(QString("PLAYER1"));
+    });
 
     // create the play button vs computer
-    Button *playButtonC = new Button(QString("Play vs computer"));
+    Button* playButtonC = new Button(QString("Play vs computer"));
     playButtonC->setPos(600, 450);
     scene->addItem(playButtonC);
+    connect(playButtonC, &Button::clicked, this, [=]() {
+        displayBotMenu();
+    });
 
     // create the quit button
-    Button *quitButton = new Button(QString("Quit"));
-    int qxPos = this->width() / 2 - quitButton->boundingRect().width() / 2;
+    Button* quitButton = new Button(QString("Quit"));
+    int qxPos = this->width()/2 - quitButton->boundingRect().width()/2;
     int qyPos = 600;
     quitButton->setPos(qxPos, qyPos);
     scene->addItem(quitButton);
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
 
     // add images
-    QGraphicsPixmapItem *imageHumans = new QGraphicsPixmapItem(
-        QPixmap(QString(":/images/Images/humans.png")));
-    imageHumans->setPos(225, 250);
+    QGraphicsPixmapItem* imageHumans = new QGraphicsPixmapItem(QPixmap(QString(":/images/humans.png")));
+    imageHumans->setPos(225,250);
     scene->addItem(imageHumans);
 
-    QGraphicsPixmapItem *imageComputer = new QGraphicsPixmapItem(
-        QPixmap(QString(":/images/Images/computer.png")));
-    imageComputer->setPos(625, 250);
+    QGraphicsPixmapItem* imageComputer = new QGraphicsPixmapItem(QPixmap(QString(":/images/computer.png")));
+    imageComputer->setPos(625,250);
     scene->addItem(imageComputer);
 }
 
@@ -170,8 +182,6 @@ void Game::attack(Cell *cell){
                 // draw hit blast
                 cell->drawBlast1();
 
-
-
                 // show whos Turn
                 textPlayer1->setVisible(true);
                 textPlayer2->setVisible(true);
@@ -206,23 +216,72 @@ void Game::attack(Cell *cell){
     }
 }
 
-QString Game::getWhosTurn()
+void Game::pickUpShip(Ship *ship)
 {
+
+}
+
+void Game::placeSpecifiedShip(Cell *cell)
+{
+
+}
+
+bool Game::isCellInMap(int x, int y)
+{
+
+}
+
+void Game::checkShipInHit(Cell *cell){
+
+    // find in which ship you hit
+    Ship* temp_ship;
+    temp_ship = cellToShip[cell];
+
+    // countHit++
+    temp_ship->increaseCountHit();
+
+    // check is ship destroyed
+    if(temp_ship->getCountHit() == temp_ship->getNumDeck()){
+        temp_ship->destroyShip(getWhosTurn());
+
+        if(botMode && hitedCell.size() != 0){
+            // make vector of hited cells
+            checkHitedShips();
+        }
+    }
+
+    // end game if ships run out
+    if(numShipsPlayer2 == 0){
+        displayGameOverWindow(QString("First player win"));
+    }
+    else if(numShipsPlayer1 == 0){
+        displayGameOverWindow(QString("Second player win"));
+    }
+}
+
+void Game::mouseMoveEvent(QMouseEvent *event)
+{
+
+}
+
+void Game::mousePressEvent(QMouseEvent *event)
+{
+
+}
+
+QString Game::getWhosTurn(){
     return whosTurn_;
 }
 
-int Game::getWidthMap()
-{
+int Game::getWidthMap(){
     return widthMap;
 }
 
-int Game::getHeightMap()
-{
+int Game::getHeightMap(){
     return heightMap;
 }
 
-void Game::setWindowSize(int width, int height)
-{
+void Game::setWindowSize(int width, int height){
     // set window width and height
     widthWindow = width;
     heightWindow = height;
@@ -231,29 +290,28 @@ void Game::setWindowSize(int width, int height)
     setFixedSize(width, height);
 
     // set size of scene
-    scene->setSceneRect(0, 0, width, height);
+    scene->setSceneRect(0,0,width, height);
 }
 
-void Game::setMapSize(int rows, int columns)
-{
+void Game::setMapSize(int rows, int columns){
     // resize map
     widthMap = rows;
     heightMap = columns;
 }
 
-void Game::setWhosTurn(QString player)
-{
+void Game::setWhosTurn(QString player){
     // change the QString
     whosTurn_ = player;
 
     // change the color of players
-    if (player == QString("PLAYER1")) {
+    if(player == QString("PLAYER1")){
         // set textPlayer1 green, what meen his turn
         textPlayer1->setDefaultTextColor(QColor(Qt::green));
 
         // set textPlayer2 black
         textPlayer2->setDefaultTextColor(QColor(Qt::black));
-    } else if (player == QString("PLAYER2")) {
+    }
+    else if(player == QString("PLAYER2")){
         // set textPlayer2 green, what meen his turn
         textPlayer2->setDefaultTextColor(QColor(Qt::green));
 

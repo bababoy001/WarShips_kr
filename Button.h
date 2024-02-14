@@ -6,8 +6,7 @@
 #include <QGraphicsTextItem>
 #include <QObject>
 
-class Button : public QObject, public QGraphicsRectItem
-{
+class Button : public QObject, public QGraphicsRectItem{
     Q_OBJECT
 public:
     // constructors

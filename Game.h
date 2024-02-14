@@ -1,13 +1,17 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
-#include <QGraphicsView>
+#include <QMouseEvent>
+#include <QPair>
+#include <QMap>
 #include "Cell.h"
+#include "Ship.h"
+#include "Bot.h"
 
-class Game : public QGraphicsView
-{
+class Game : public QGraphicsView{
     Q_OBJECT
 public:
     // constructor
@@ -15,8 +19,15 @@ public:
 
     // public methods
     void displayMainMenu();
-
     void attack(Cell* cell);
+    void pickUpShip(Ship* ship);
+    void placeSpecifiedShip(Cell *cell);
+    bool isCellInMap(int x, int y);
+    void checkShipInHit(Cell* cell);
+
+    // events
+    void mouseMoveEvent(QMouseEvent * event);
+    void mousePressEvent(QMouseEvent* event);
 
     // getters
     QString getWhosTurn();
@@ -34,9 +45,9 @@ public:
     QVector<QVector<Cell*>> player2Map;
 
     QVector<QPair<Cell*, int>> hitedCell;
+    QVector<Ship *> hitedShips;
 
-
-
+    Ship* shipToPlace;
     bool gameMode;
     bool placeMode;
 
@@ -49,7 +60,7 @@ public:
     int numMinePlayer1;
     int numMinePlayer2;
 
-
+    Bot* bot;
     bool botMode;
 
 public slots:
@@ -83,7 +94,10 @@ private:
 
 
     QVector<QVector<Cell*>> mapForPlaceShip;
+    QVector<Ship *> player1Ship;
+    QVector<Ship *> player2Ship;
 
+    QMap<Cell*, Ship*> cellToShip;
 
     QString whosTurn_;
 

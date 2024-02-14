@@ -143,7 +143,6 @@ void BotLvl3::findNextTarget(int &x, int &y){
     // if bot miss
     if (game->isCellInMap(newX, newY) && !game->player2Map[newX][newY]->isHit && !game->player2Map[newX][newY]->isMiss && !game->player2Map[newX][newY]->isShip) {
 
-
         // if you know direction - miss and change side
         if (foundDirection) {
             x = newX;

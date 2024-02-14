@@ -146,7 +146,6 @@ void BotLvl2::findNextTarget(int &x, int &y){
         // save coord to last hit
         lastHit = QPair<int, int>(x, y);
 
-
         // save direction
         foundDirection = true;
     }

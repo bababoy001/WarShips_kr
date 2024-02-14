@@ -3,7 +3,6 @@
 
 #include <QGraphicsPixmapItem>
 #include <QPair>
-#include <QMap>
 #include "Cell.h"
 
 class Ship: public QGraphicsPixmapItem{

@@ -14,52 +14,52 @@ fuelShip::fuelShip(): Ship(){
 void fuelShip::makeSkinShip(bool visiable){
     // set pixItem to all cells in this ship
     if(getHorizontal()){
-        setPixmap(QPixmap(QString(":/fuelShip/fuelShip.png")));
-        pixItem1->setPixmap(QPixmap(QString(":/fuelShip/fuelShip(1).png")));
+        setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShip.png")));
+        pixItem1->setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShip(1).png")));
         pixItem1->setPos(10,2);
         pixItem1->setVisible(visiable);
         cell1->setImage(pixItem1);
         cell1->isShip = true;
 
-        pixItem2->setPixmap(QPixmap(QString(":/fuelShip/fuelShip(2).png")));
+        pixItem2->setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShip(2).png")));
         pixItem2->setPos(0,2);
         pixItem2->setVisible(visiable);
         cell2->setImage(pixItem2);
         cell2->isShip = true;
 
-        pixItem3->setPixmap(QPixmap(QString(":/fuelShip/fuelShip(3).png")));
+        pixItem3->setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShip(3).png")));
         pixItem3->setPos(0,2);
         pixItem3->setVisible(visiable);
         cell3->setImage(pixItem3);
         cell3->isShip = true;
 
-        pixItem4->setPixmap(QPixmap(QString(":/fuelShip/fuelShip(4).png")));
+        pixItem4->setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShip(4).png")));
         pixItem4->setPos(0,2);
         pixItem4->setVisible(visiable);
         cell4->setImage(pixItem4);
         cell4->isShip = true;
     }
     else if (!getHorizontal()){
-        setPixmap(QPixmap(QString(":/fuelShip/fuelShipv.png")));
-        pixItem1->setPixmap(QPixmap(QString(":/fuelShip/fuelShip(1)v.png")));
+        setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShipv.png")));
+        pixItem1->setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShip(1)v.png")));
         pixItem1->setPos(2,10);
         pixItem1->setVisible(visiable);
         cell1->setImage(pixItem1);
         cell1->isShip = true;
 
-        pixItem2->setPixmap(QPixmap(QString(":/fuelShip/fuelShip(2)v.png")));
+        pixItem2->setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShip(2)v.png")));
         pixItem2->setPos(2,0);
         pixItem2->setVisible(visiable);
         cell2->setImage(pixItem2);
         cell2->isShip = true;
 
-        pixItem3->setPixmap(QPixmap(QString(":/fuelShip/fuelShip(3)v.png")));
+        pixItem3->setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShip(3)v.png")));
         pixItem3->setPos(2,0);
         pixItem3->setVisible(visiable);
         cell3->setImage(pixItem3);
         cell3->isShip = true;
 
-        pixItem4->setPixmap(QPixmap(QString(":/fuelShip/fuelShip(4)v.png")));
+        pixItem4->setPixmap(QPixmap(QString(":/fuelShip/Images/fuelShip(4)v.png")));
         pixItem4->setPos(2,0);
         pixItem4->setVisible(visiable);
         cell4->setImage(pixItem4);

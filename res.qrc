@@ -5,11 +5,14 @@
     </qresource>
     <qresource prefix="/music">
         <file>Music/menuSound.wav</file>
+        <file>Music/error.wav</file>
+        <file>Music/soundHit.wav</file>
+        <file>Music/soundMiss.wav</file>
     </qresource>
     <qresource prefix="/mine">
         <file>Images/mine.png</file>
     </qresource>
-    <qresource prefix="/capitalShips">
+    <qresource prefix="/capitalShip">
         <file>Images/capitalShip(1).png</file>
         <file>Images/capitalShip(1)v.png</file>
         <file>Images/capitalShip(2).png</file>

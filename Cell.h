@@ -7,8 +7,7 @@
 
 #include <QGraphicsPixmapItem>
 
-class Cell : public QGraphicsItemGroup
-{
+class Cell : public QGraphicsItemGroup{
 public:
     // constructors
     Cell(QGraphicsItem *parent = NULL);

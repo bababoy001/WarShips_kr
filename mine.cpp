@@ -13,8 +13,8 @@ mine::mine(): Ship(){
 void mine::makeSkinShip(bool visiable){
 
     // set pixItem to cell in this mine
-    setPixmap(QPixmap(QString(":/mine/mine.png")));
-    pixItem1->setPixmap(QPixmap(QString(":/mine/mine.png")));
+    setPixmap(QPixmap(QString(":/mine/Images/mine.png")));
+    pixItem1->setPixmap(QPixmap(QString(":/mine/Images/mine.png")));
     pixItem1->setPos(5,5);
     pixItem1->setVisible(visiable);
     cell1->setImage(pixItem1);
