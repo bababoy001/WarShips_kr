@@ -75,10 +75,25 @@ public slots:
 
 private:
     // private method
+    void enterSizeMap();
     void createScreenGame();
     void drawGame();
     void hideGame();
     void hideShips(QString player);
+
+    void createRandomShips(QString player);
+    void randomPlaceShip(Ship* temp_ship, QString player);
+    void randomPlaceMine(Ship* temp_ship, QString player);
+    void createShips(QString player);
+    void placeShip(QString player);
+    void makeMapPlaceShip(QString player);
+    void initializeVar();
+    void addShipToVector(Ship* temp_ship, QString player);
+
+    bool isPlaceForShip(int x, int y, Ship* temp_ship, QString player);
+    bool isCellForShip(int x, int y, QString player);
+
+    void checkHitedShips();
 
     // private attributes
     int widthWindow;

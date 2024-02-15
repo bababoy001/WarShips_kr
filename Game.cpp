@@ -8,6 +8,13 @@
 #include <stdlib.h>
 #include "BotLvl2.h"
 #include "BotLvl3.h"
+#include <QLineEdit>
+#include <QDialog>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 Game::Game(QWidget *parent)
 {
@@ -664,6 +671,53 @@ void Game::restartGame(){
     displayMainMenu();
 }
 
+void Game::enterSizeMap(){
+    // enter Width and Height
+    QLabel *label1 = new QLabel("Width (from 8 to 22):");
+    QLabel *label2 = new QLabel("Height (from 8 to 15) :");
+    QLineEdit *lineEdit1 = new QLineEdit;
+    QLineEdit *lineEdit2 = new QLineEdit;
+
+    // make buttons
+    QPushButton *okButton = new QPushButton("OK");
+    QPushButton *cancelButton = new QPushButton("Close");
+
+    // Layout
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+
+    buttonLayout->addWidget(okButton);
+    buttonLayout->addWidget(cancelButton);
+
+    mainLayout->addWidget(label1);
+    mainLayout->addWidget(lineEdit1);
+    mainLayout->addWidget(label2);
+    mainLayout->addWidget(lineEdit2);
+    mainLayout->addLayout(buttonLayout);
+
+    QWidget *parent = nullptr;
+
+    QDialog dialog(parent);
+    dialog.setLayout(mainLayout);
+
+    // connect signals and slots
+    QObject::connect(okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+    QObject::connect(cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
+
+    // if player enter size map
+    if (dialog.exec() == QDialog::Accepted) {
+        if (lineEdit1->text().toInt() >= 8 && lineEdit1->text().toInt() <= 22 && lineEdit2->text().toInt() >=8 && lineEdit2->text().toInt() <=15) {
+            setMapSize(lineEdit1->text().toInt(),lineEdit2->text().toInt());
+        } else {
+            enterSizeMap();
+        }
+    }
+    // if player close dialog
+    else {
+        setMapSize(10,10);
+    }
+}
+
 
 void Game::createScreenGame()
 {
@@ -882,6 +936,95 @@ void Game::hideShips(QString player){
             for(int j = 0; j < player2Ship[i]->coorXY.size(); j++){
                 player2Map[player2Ship[i]->coorXY[j].first][player2Ship[i]->coorXY[j].second]->pixItem->setVisible(false);
             }
+        }
+    }
+}
+
+bool Game::isPlaceForShip(int x, int y, Ship *temp_ship, QString player){
+    bool place = true;
+
+    // check coordinates
+    for (int i = 0; i < temp_ship->getNumDeck(); i++) {
+
+        // if ship horizontal
+        if (temp_ship->getHorizontal()) {
+            if (!isCellForShip(x+i, y, player)) {
+                place = false;
+                break;
+            }
+            else {
+                QPair<int, int> pairXY(x+i, y);
+                temp_ship->coorXY.push_back(pairXY);
+            }
+        }
+
+        // if ship vertical
+        else if (!temp_ship->getHorizontal()) {
+            if (!isCellForShip(x, y + i, player)) {
+                place = false;
+                break;
+            }
+            else {
+                QPair<int, int> pairXY(x, y+i);
+                temp_ship->coorXY.push_back(pairXY);
+            }
+        }
+    }
+
+    // if wrong coordinates - clear old coordinates
+    if (!place) {
+        temp_ship->coorXY.clear();
+    }
+    return place;
+}
+
+bool Game::isCellForShip(int x, int y, QString player){
+    // create temporary map
+    QVector<QVector<Cell*>> currentMap;
+
+    // check whos map
+    if(player == QString("PLAYER1")){
+        currentMap = player1Map;
+    }
+    else if(player == QString("PLAYER2")){
+        currentMap = player2Map;
+    }
+
+    // check is ship can place in this cell
+    if (!isCellInMap(x, y) || currentMap[x][y]->isShip) {
+        return false;
+    }
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            if (isCellInMap(x + dx, y + dy) && currentMap[x + dx][y + dy]->isShip) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void Game::checkHitedShips(){
+    // make hited cells
+
+    QVector<QPair<Cell*, int>> tempHitedCell = hitedCell;
+
+    hitedCell.clear();
+    hitedShips.clear();
+
+    for (int i = 0; i < tempHitedCell.size(); ++i) {
+        if(cellToShip[tempHitedCell[i].first]->getCountHit() != cellToShip[tempHitedCell[i].first]->getNumDeck() && hitedShips.indexOf(cellToShip[tempHitedCell[i].first]) == -1){
+            // set horizontal if bot hit more then 1 deck
+            if(cellToShip[tempHitedCell[i].first]->getCountHit() >=2){
+                if(cellToShip[tempHitedCell[i].first]->getHorizontal()){
+                    tempHitedCell[i].second = 1;
+                }
+                else if(!cellToShip[tempHitedCell[i].first]->getHorizontal()){
+                    tempHitedCell[i].second = 0;
+                }
+            }
+            hitedCell.push_back(tempHitedCell[i]);
+            hitedShips.push_back(cellToShip[tempHitedCell[i].first]);
         }
     }
 }
