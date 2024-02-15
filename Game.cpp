@@ -940,6 +940,131 @@ void Game::hideShips(QString player){
     }
 }
 
+void Game::createRandomShips(QString player){
+    // get default variables
+    initializeVar();
+
+    // make ships
+    while (currntShipsDeck < max_deck) {
+        Ship* temp_ship;
+        horizontal = rand() % 2;
+        temp_size_ship = 1 + rand() % max_length_ship;
+        while ((temp_size_ship + currntShipsDeck) > max_deck){
+            temp_size_ship--;
+        }
+        if (fuelNum) {
+            temp_ship = new fuelShip();
+            temp_size_ship = 4;
+            fuelNum--;
+        }
+        else if (capitalNum) {
+            temp_ship = new capitalShip();
+            temp_size_ship = 4;
+            capitalNum--;
+        }
+        else{
+            temp_ship = new Ship();
+        }
+
+        temp_ship->setHorizontal(horizontal);
+        temp_ship->setNameShip(nameShip);
+        temp_ship->setNumDeck(temp_size_ship);
+        temp_ship->setOwner(player);
+        temp_ship->makeSkinShip(true);
+
+        randomPlaceShip(temp_ship, player);
+
+        currntShipsDeck += temp_size_ship;
+    }
+
+    // make mines
+    while (mineNum) {
+        Ship* temp_ship = new mine();
+        horizontal = rand() % 2;
+        temp_size_ship = 1;
+
+        temp_ship->setHorizontal(horizontal);
+        temp_ship->setNumDeck(temp_size_ship);
+        temp_ship->setOwner(player);
+        temp_ship->makeSkinShip(true);
+
+        randomPlaceMine(temp_ship, player);
+
+        mineNum--;
+    }
+
+    // start or change player
+    if(player == QString("PLAYER1")){
+        displayFreindMenu("PLAYER2");
+    }
+    else if(player == QString("PLAYER2")){
+        start();
+    }
+}
+
+void Game::randomPlaceShip(Ship *temp_ship, QString player){
+    // get random coordinates
+    int x = rand() % widthMap;
+    int y = rand() % heightMap;
+
+    // check coordinates
+    if(!isPlaceForShip(x,y,temp_ship, player)){
+        // if coordinates not for ship - try new coord
+        randomPlaceShip(temp_ship, player);
+        return;
+    }
+
+    // add to player1 or player2 vector
+    addShipToVector(temp_ship, player);
+}
+
+void Game::randomPlaceMine(Ship *temp_ship, QString player){
+    // get random coordinates
+    int x = rand() % widthMap;
+    int y = rand() % heightMap;
+
+    // check coordinates
+    while(!isPlaceForShip(x,y,temp_ship, player)){
+        // if coordinates not for mine - try new coord
+        randomPlaceMine(temp_ship, player);
+        return;
+    }
+
+    // add to player1 or player2 vector
+    if(player == QString("PLAYER1")){
+        temp_ship->cell1->setPos(player1Map[temp_ship->coorXY[0].first][temp_ship->coorXY[0].second]->pos());
+        scene->removeItem(player1Map[temp_ship->coorXY[0].first][temp_ship->coorXY[0].second]);
+        player1Map[temp_ship->coorXY[0].first][temp_ship->coorXY[0].second] = temp_ship->cell1;
+        scene->addItem(player1Map[temp_ship->coorXY[0].first][temp_ship->coorXY[0].second]);
+        cellToShip[temp_ship->cell1] = temp_ship;
+
+        player1Ship.push_back(temp_ship);
+    }
+    else if(player == QString("PLAYER2")){
+        temp_ship->cell1->setPos(player2Map[temp_ship->coorXY[0].first][temp_ship->coorXY[0].second]->pos());
+        scene->removeItem(player2Map[temp_ship->coorXY[0].first][temp_ship->coorXY[0].second]);
+        player2Map[temp_ship->coorXY[0].first][temp_ship->coorXY[0].second] = temp_ship->cell1;
+        scene->addItem(player2Map[temp_ship->coorXY[0].first][temp_ship->coorXY[0].second]);
+        cellToShip[temp_ship->cell1] = temp_ship;
+
+        player2Ship.push_back(temp_ship);
+    }
+}
+
+void Game::initializeVar(){
+    // initialize variables to deaufolt
+    max_length_ship = 4;
+    max_deck = int(getWidthMap() * getHeightMap() * 0.2);
+    temp_size_ship = 1;
+    horizontal = false;
+    currntShipsDeck = 0;
+    nameShip = QString("Ship");
+    fuelNum = 1;
+    capitalNum = 1;
+    mineNum = int(getWidthMap() * getHeightMap() * 0.02);
+}
+
+
 bool Game::isPlaceForShip(int x, int y, Ship *temp_ship, QString player){
     bool place = true;
 
