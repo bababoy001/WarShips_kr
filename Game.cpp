@@ -1051,6 +1051,141 @@ void Game::randomPlaceMine(Ship *temp_ship, QString player){
     }
 }
 
+void Game::createShips(QString player){
+    // get default variables
+    initializeVar();
+
+    // make one more map to place ships
+    makeMapPlaceShip(player);
+
+    // make one ship
+    placeShip(player);
+}
+
+void Game::placeShip(QString player){
+
+    // check decks of ship
+    if(currntShipsDeck < max_deck) {
+        Ship* temp_ship;
+        horizontal = rand() % 2;
+        temp_size_ship = 1 + rand() % max_length_ship;
+        while ((temp_size_ship + currntShipsDeck) > max_deck){
+            temp_size_ship--;
+        }
+
+        if (fuelNum) {
+            temp_ship = new fuelShip();
+            temp_size_ship = 4;
+            fuelNum--;
+        }
+        else if (capitalNum) {
+            temp_ship = new capitalShip();
+            temp_size_ship = 4;
+            capitalNum--;
+        }
+        else{
+            temp_ship = new Ship();
+        }
+
+        temp_ship->setHorizontal(horizontal);
+        temp_ship->setNameShip(nameShip);
+        temp_ship->setNumDeck(temp_size_ship);
+        temp_ship->setOwner(player);
+        temp_ship->makeSkinShip(true);
+
+        temp_ship->setPos(mapForPlaceShip[1][1]->x()+5,mapForPlaceShip[1][1]->y()+5);
+        scene->addItem(temp_ship);
+
+        currntShipsDeck += temp_size_ship;
+    }
+    else if(mineNum) {
+
+        // make mines
+        Ship* temp_ship = new mine();
+        horizontal = rand() % 2;
+        temp_size_ship = 1;
+
+        temp_ship->setHorizontal(horizontal);
+        temp_ship->setNumDeck(temp_size_ship);
+        temp_ship->setOwner(player);
+        temp_ship->makeSkinShip(true);
+
+        temp_ship->setPos(mapForPlaceShip[1][1]->x()+5,mapForPlaceShip[1][1]->y()+5);
+        scene->addItem(temp_ship);
+
+        if(player == QString("PLAYER1")){
+            numMinePlayer1++;
+            numShipsPlayer1--;
+        }
+        else if(player == QString("PLAYER2")){
+            numMinePlayer2++;
+            numShipsPlayer2--;
+        }
+
+        mineNum--;
+    }
+    else{
+        // delete mapForPlaceShip
+        for(size_t i = 0, n = widthMapFPS; i < n; i++){
+            for(size_t j = 0, n = heightMapFPS; j < n; j++){
+                scene->removeItem(mapForPlaceShip[i][j]);
+                delete mapForPlaceShip[i][j];
+            }
+        }
+
+        // create ready button
+        Button* Ready = new Button(QString("Ready"));
+        int nrxPos = this->width()/2 - Ready->boundingRect().width()/2;
+        int nryPos = this->height() - 100;
+        if(player == QString("PLAYER1")){
+            Ready->setPos(nrxPos, nryPos);
+            scene->addItem(Ready);
+            itemToDelete.push_back(Ready);
+            connect(Ready, &Button::clicked, this, [=]() {
+                displayFreindMenu("PLAYER2");
+            });
+        }
+        else if(player == QString("PLAYER2")){
+            Ready->setPos(nrxPos, nryPos);
+            scene->addItem(Ready);
+            itemToDelete.push_back(Ready);
+            connect(Ready, &Button::clicked, this, [=]() {
+                start();
+            });
+        }
+    }
+}
+
+void Game::makeMapPlaceShip(QString player){
+    // change size of vector mapForPlaceShip
+    mapForPlaceShip.resize(widthMapFPS);
+    for (int i = 0; i < widthMapFPS; ++i) {
+        mapForPlaceShip[i].resize(heightMapFPS);
+    }
+
+    // add cells to mapForPlaceShip
+    int firstCellPosX = 0;
+    int firstCellPosY = 0;
+    if(player == QString("PLAYER1")){
+        firstCellPosX = 50 + getWidthMap()*20 - widthMapFPS*20;
+        firstCellPosY = 50 + getHeightMap()*40 + 45;
+    }
+    else if(player == QString("PLAYER2")){
+        firstCellPosX = 150 + getWidthMap()*60 - widthMapFPS*20;
+        firstCellPosY = 50 + getHeightMap()*40 + 45;
+    }
+
+    for(size_t i = 0, n = widthMapFPS; i < n; i++){
+        for(size_t j = 0, n = heightMapFPS; j < n; j++){
+            Cell* cell = new Cell();
+            cell->setPos(firstCellPosX + 40*i, firstCellPosY + 40*j);
+            cell->setPlaceMode();
+            mapForPlaceShip[i][j] = cell;
+            scene->addItem(cell);
+        }
+    }
+}
+
 void Game::initializeVar(){
     // initialize variables to deaufolt
     max_length_ship = 4;
@@ -1062,6 +1197,83 @@ void Game::initializeVar(){
     fuelNum = 1;
     capitalNum = 1;
     mineNum = int(getWidthMap() * getHeightMap() * 0.02);
+}
+
+void Game::addShipToVector(Ship *temp_ship, QString player){
+    // add to player1 or player2 vector
+    if(player == QString("PLAYER1")){
+        for (int i = 0; i < temp_ship->getNumDeck(); i++) {
+            switch (i) {
+            case 0:
+                temp_ship->cell1->setPos(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]->pos());
+                scene->removeItem(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second] = temp_ship->cell1;
+                scene->addItem(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                cellToShip[temp_ship->cell1] = temp_ship;
+                break;
+            case 1:
+                temp_ship->cell2->setPos(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]->pos());
+                scene->removeItem(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second] = temp_ship->cell2;
+                scene->addItem(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                cellToShip[temp_ship->cell2] = temp_ship;
+                break;
+            case 2:
+                temp_ship->cell3->setPos(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]->pos());
+                scene->removeItem(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second] = temp_ship->cell3;
+                scene->addItem(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                cellToShip[temp_ship->cell3] = temp_ship;
+                break;
+            case 3:
+                temp_ship->cell4->setPos(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]->pos());
+                scene->removeItem(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second] = temp_ship->cell4;
+                scene->addItem(player1Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                cellToShip[temp_ship->cell4] = temp_ship;
+                break;
+            }
+        }
+        player1Ship.push_back(temp_ship);
+        numShipsPlayer1++;
+    }
+    else if(player == QString("PLAYER2")){
+        for (int i = 0; i < temp_ship->getNumDeck(); i++) {
+            switch (i) {
+            case 0:
+                temp_ship->cell1->setPos(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]->pos());
+                scene->removeItem(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second] = temp_ship->cell1;
+                scene->addItem(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                cellToShip[temp_ship->cell1] = temp_ship;
+                break;
+            case 1:
+                temp_ship->cell2->setPos(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]->pos());
+                scene->removeItem(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second] = temp_ship->cell2;
+                scene->addItem(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                cellToShip[temp_ship->cell2] = temp_ship;
+                break;
+            case 2:
+                temp_ship->cell3->setPos(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]->pos());
+                scene->removeItem(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second] = temp_ship->cell3;
+                scene->addItem(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+
+                cellToShip[temp_ship->cell3] = temp_ship;
+                break;
+            case 3:
+                temp_ship->cell4->setPos(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]->pos());
+                scene->removeItem(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second] = temp_ship->cell4;
+                scene->addItem(player2Map[temp_ship->coorXY[i].first][temp_ship->coorXY[i].second]);
+                cellToShip[temp_ship->cell4] = temp_ship;
+                break;
+            }
+        }
+        player2Ship.push_back(temp_ship);
+        numShipsPlayer2++;
+    }
 }
 
 
