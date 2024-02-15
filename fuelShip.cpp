@@ -89,6 +89,7 @@ void fuelShip::destroyShip(QString player){
         else if(player == QString("PLAYER2")){
             game->player1Map[x][y]->drawBlast2();
         }
+
         // iterates over the coordinates around the ship and make them Miss or Hit if it's ship
         for (int dx = -2; dx <= 2; dx++) {
             for (int dy = -2; dy <= 2; dy++) {

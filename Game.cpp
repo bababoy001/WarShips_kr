@@ -16,8 +16,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-Game::Game(QWidget *parent)
-{
+Game::Game(QWidget *parent){
     // set up the screen
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -29,7 +28,21 @@ Game::Game(QWidget *parent)
     setScene(scene);
 
     // set up the screen and scene
-    setWindowSize(widthWindow, heightWindow);
+    setWindowSize(widthWindow,heightWindow);
+
+    // initialize variables
+    numShipsPlayer1 = 0;
+    numShipsPlayer2 = 0;
+    numMinePlayer1 = 0;
+    numMinePlayer2 = 0;
+    gameMode = false;
+    placeMode = false;
+    zalpMode1 = 0;
+    zalpMode2 = 0;
+    botMode = false;
+    shipToPlace = NULL;
+    widthMapFPS = 6;
+    heightMapFPS = 6;
 }
 
 void Game::displayMainMenu(){
@@ -68,11 +81,11 @@ void Game::displayMainMenu(){
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
 
     // add images
-    QGraphicsPixmapItem* imageHumans = new QGraphicsPixmapItem(QPixmap(QString(":/images/humans.png")));
+    QGraphicsPixmapItem* imageHumans = new QGraphicsPixmapItem(QPixmap(QString(":/images/Images/humans.png")));
     imageHumans->setPos(225,250);
     scene->addItem(imageHumans);
 
-    QGraphicsPixmapItem* imageComputer = new QGraphicsPixmapItem(QPixmap(QString(":/images/computer.png")));
+    QGraphicsPixmapItem* imageComputer = new QGraphicsPixmapItem(QPixmap(QString(":/images/Images/computer.png")));
     imageComputer->setPos(625,250);
     scene->addItem(imageComputer);
 }
@@ -117,7 +130,7 @@ void Game::attack(Cell *cell){
             textPlayer2->setVisible(false);
 
             // play sound if Miss
-            sound->setSource(QUrl("qrc:/music/soundMiss.wav"));
+            sound->setSource(QUrl("qrc:/music/Music/soundMiss.wav"));
             sound->play();
 
             // change turn
@@ -179,7 +192,7 @@ void Game::attack(Cell *cell){
             textPlayer2->setVisible(false);
 
             // play sound if Hit
-            sound->setSource(QUrl("qrc:/music/soundHit.wav"));
+            sound->setSource(QUrl("qrc:/music/Music/soundHit.wav"));
             sound->play();
 
             QString rememberPlayer = getWhosTurn();
@@ -274,7 +287,7 @@ void Game::placeSpecifiedShip(Cell* cell){
     if(!isPlaceForShip(x,y,shipToPlace, shipToPlace->getOwner())){
         // if coordinates not for ship - show wrongPlace and play sound (dont place ship)
         QSoundEffect *music = new QSoundEffect(this);
-        music->setSource(QUrl("qrc:/music/error.wav"));
+        music->setSource(QUrl("qrc:/music/Music/error.wav"));
         music->setVolume(0.1);
         music->play();
 
@@ -719,8 +732,7 @@ void Game::enterSizeMap(){
 }
 
 
-void Game::createScreenGame()
-{
+void Game::createScreenGame(){
     // change size of maps: player1Map, player2Map
     player1Map.resize(getWidthMap());
     player2Map.resize(getWidthMap());
@@ -895,7 +907,6 @@ void Game::drawGame(){
     for (size_t i = 0, n = textNumbers.size(); i < n; i++) {
         textNumbers[i]->setVisible(true);
     }
-
 }
 
 void Game::hideGame(){
@@ -1342,8 +1353,8 @@ bool Game::isCellForShip(int x, int y, QString player){
 }
 
 void Game::checkHitedShips(){
-    // make hited cells
 
+    // make hited cells
     QVector<QPair<Cell*, int>> tempHitedCell = hitedCell;
 
     hitedCell.clear();
